@@ -93,7 +93,7 @@ class Redirect extends Response {
 	}
 
 	/**
-	 * Add an item to the session flash data.
+	 * Add one/many item(s) to the session flash data.
 	 *
 	 * This is useful for "passing" status messages or other data to the next request.
 	 *
@@ -102,18 +102,28 @@ class Redirect extends Response {
 	 *		return Redirect::to('profile')->with('message', 'Welcome Back!');
 	 * </code>
 	 *
-	 * @param  string          $key
+	 * @param  string|array    $key
 	 * @param  mixed           $value
 	 * @return Redirect
 	 */
-	public function with($key, $value)
+	public function with($key, $value = '')
 	{
 		if (Config::get('session.driver') == '')
 		{
 			throw new \Exception('A session driver must be set before setting flash data.');
 		}
 
-		Session::flash($key, $value);
+        if (is_array($key) )
+        {
+            foreach ($key AS $k => $v)
+            {
+                Session::flash($k, $v);
+            }
+        }
+        else
+        {
+            Session::flash($key, $value);
+        }
 
 		return $this;
 	}
